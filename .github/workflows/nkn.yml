@@ -1,4 +1,4 @@
-name: NKN Node com Binário Comercial
+name: NKN Node Comercial
 
 on:
   workflow_dispatch:
@@ -13,24 +13,24 @@ jobs:
       - name: Instalar dependências
         run: sudo apt update && sudo apt install unzip -y
 
-      - name: Baixar binário comercial do NKN
+      - name: Baixar binário
         run: |
           set -eux
           curl -fL https://commercial.nkn.org/downloads/nkn-commercial/linux-amd64.zip -o nkn.zip
           unzip -o nkn.zip
           if [ ! -f "linux-amd64/nkn-commercial" ]; then
-            echo "Erro: nkn-commercial não encontrado após o unzip"
+            echo "Erro: binário não encontrado"
             exit 1
           fi
           chmod +x linux-amd64/nkn-commercial
           mv linux-amd64/nkn-commercial .
 
-      - name: Criar config.json
+      - name: Configurar nó
         run: |
           mkdir -p ~/.nkn
           echo '{ "BeneficiaryAddr": "NKNaMFPovvDXo3M3XuRKbKgTEjKUqegjSD9z" }' > ~/.nkn/config.json
 
-      - name: Iniciar o NKN Node
+      - name: Executar nó
         run: |
-          ./nkn-commercial --syncmode fast --logtostderr &
+          ./nkn-commercial --logtostderr &
           while sleep 300; do echo "Node ativo..."; done
