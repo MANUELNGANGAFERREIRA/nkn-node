@@ -1,0 +1,36 @@
+name: NKN Node 24/7
+
+on:
+  workflow_dispatch: # permite rodar manualmente
+  schedule:
+    - cron: '0 */6 * * *' # reinicia a cada 6 horas (GitHub limita a 6h)
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Instalar dependências
+        run: |
+          sudo apt update
+          sudo apt install unzip wget -y
+
+      - name: Baixar NKN node
+        run: |
+          wget https://github.com/nknorg/nkn/releases/latest/download/linux-amd64.zip -O nkn.zip
+          unzip nkn.zip
+          chmod +x nknd nknc
+
+      - name: Criar arquivo config
+        run: |
+          mkdir -p ~/.nkn
+          cat > ~/.nkn/config.json <<EOF
+{
+  "BeneficiaryAddr": "NKNaMFPovvDXo3M3XuRKbKgTEjKUqegjSD9z"
+}
+EOF
+
+      - name: Rodar node
+        run: |
+          ./nknd --no-nat --syncmode fast --logtostderr &
+          while sleep 300; do echo "NKN node ativo..."; done
