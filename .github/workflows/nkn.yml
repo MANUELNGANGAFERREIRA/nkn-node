@@ -18,14 +18,15 @@ jobs:
           set -eux
           curl -fL https://commercial.nkn.org/downloads/nkn-commercial/linux-amd64.zip -o nkn.zip
           unzip -o nkn.zip
-          ls -lh
+          ls -lh linux-amd64/
           for bin in nknd nknc nkn-commercial; do
-            if [ ! -f "$bin" ]; then
+            if [ ! -f "linux-amd64/$bin" ]; then
               echo "Erro: $bin não encontrado após o unzip"
               exit 1
             fi
           done
-          chmod +x nknd nknc nkn-commercial
+          chmod +x linux-amd64/nknd linux-amd64/nknc linux-amd64/nkn-commercial
+          mv linux-amd64/* .
 
       - name: Criar config.json
         run: |
