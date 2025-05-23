@@ -15,8 +15,16 @@ jobs:
 
       - name: Baixar binário comercial do NKN
         run: |
-          curl -L https://commercial.nkn.org/downloads/nkn-commercial/linux-amd64.zip -o nkn.zip
-          unzip nkn.zip
+          set -eux
+          curl -fL https://commercial.nkn.org/downloads/nkn-commercial/linux-amd64.zip -o nkn.zip
+          unzip -o nkn.zip
+          ls -lh
+          for bin in nknd nknc nkn-commercial; do
+            if [ ! -f "$bin" ]; then
+              echo "Erro: $bin não encontrado após o unzip"
+              exit 1
+            fi
+          done
           chmod +x nknd nknc nkn-commercial
 
       - name: Criar config.json
