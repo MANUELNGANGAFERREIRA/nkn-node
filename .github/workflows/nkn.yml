@@ -32,5 +32,5 @@ jobs:
 
       - name: Iniciar o NKN Node
         run: |
-          ./nkn-commercial --no-nat --syncmode fast --logtostderr &
+          ./nkn-commercial --syncmode fast --logtostderr &
           while sleep 300; do echo "Node ativo..."; done
