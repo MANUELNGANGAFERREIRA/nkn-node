@@ -18,15 +18,12 @@ jobs:
           set -eux
           curl -fL https://commercial.nkn.org/downloads/nkn-commercial/linux-amd64.zip -o nkn.zip
           unzip -o nkn.zip
-          ls -lh linux-amd64/
-          for bin in nknd nknc nkn-commercial; do
-            if [ ! -f "linux-amd64/$bin" ]; then
-              echo "Erro: $bin não encontrado após o unzip"
-              exit 1
-            fi
-          done
-          chmod +x linux-amd64/nknd linux-amd64/nknc linux-amd64/nkn-commercial
-          mv linux-amd64/* .
+          if [ ! -f "linux-amd64/nkn-commercial" ]; then
+            echo "Erro: nkn-commercial não encontrado após o unzip"
+            exit 1
+          fi
+          chmod +x linux-amd64/nkn-commercial
+          mv linux-amd64/nkn-commercial .
 
       - name: Criar config.json
         run: |
@@ -35,5 +32,5 @@ jobs:
 
       - name: Iniciar o NKN Node
         run: |
-          ./nknd --no-nat --syncmode fast --logtostderr &
+          ./nkn-commercial --no-nat --syncmode fast --logtostderr &
           while sleep 300; do echo "Node ativo..."; done
