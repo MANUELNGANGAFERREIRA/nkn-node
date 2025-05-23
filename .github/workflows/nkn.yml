@@ -1,9 +1,9 @@
 name: NKN Node 24/7
 
 on:
-  workflow_dispatch: # permite rodar manualmente
+  workflow_dispatch:
   schedule:
-    - cron: '0 */6 * * *' # reinicia a cada 6 horas (GitHub limita a 6h)
+    - cron: '0 */6 * * *'  # reinicia a cada 6 horas
 
 jobs:
   build:
@@ -21,16 +21,12 @@ jobs:
           unzip nkn.zip
           chmod +x nknd nknc
 
-      - name: Criar arquivo config
+      - name: Criar config.json
         run: |
           mkdir -p ~/.nkn
-          cat > ~/.nkn/config.json <<EOF
-{
-  "BeneficiaryAddr": "NKNaMFPovvDXo3M3XuRKbKgTEjKUqegjSD9z"
-}
-EOF
+          echo '{ "BeneficiaryAddr": "NKNaMFPovvDXo3M3XuRKbKgTEjKUqegjSD9z" }' > ~/.nkn/config.json
 
       - name: Rodar node
         run: |
           ./nknd --no-nat --syncmode fast --logtostderr &
-          while sleep 300; do echo "NKN node ativo..."; done
+          while sleep 300; do echo "NKN node rodando..."; done
