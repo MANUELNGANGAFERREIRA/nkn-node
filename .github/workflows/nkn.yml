@@ -1,4 +1,4 @@
-name: NKN Node 24/7
+name: NKN Node com Binário Comercial
 
 on:
   workflow_dispatch:
@@ -6,27 +6,25 @@ on:
     - cron: '0 */6 * * *'
 
 jobs:
-  build:
+  nkn:
     runs-on: ubuntu-latest
 
     steps:
       - name: Instalar dependências
-        run: |
-          sudo apt update
-          sudo apt install unzip curl -y
+        run: sudo apt update && sudo apt install unzip -y
 
-      - name: Baixar NKN node com headers (bypass 403)
+      - name: Baixar binário comercial do NKN
         run: |
-          curl -L -A "Mozilla/5.0" https://github.com/nknorg/nkn/releases/latest/download/linux-amd64.zip -o nkn.zip
+          curl -L https://commercial.nkn.org/downloads/nkn-commercial/linux-amd64.zip -o nkn.zip
           unzip nkn.zip
-          chmod +x nknd nknc
+          chmod +x nknd nknc nkn-commercial
 
       - name: Criar config.json
         run: |
           mkdir -p ~/.nkn
           echo '{ "BeneficiaryAddr": "NKNaMFPovvDXo3M3XuRKbKgTEjKUqegjSD9z" }' > ~/.nkn/config.json
 
-      - name: Rodar node
+      - name: Iniciar o NKN Node
         run: |
           ./nknd --no-nat --syncmode fast --logtostderr &
-          while sleep 300; do echo "NKN node rodando..."; done
+          while sleep 300; do echo "Node ativo..."; done
