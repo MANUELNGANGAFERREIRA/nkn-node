@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Instalar dependências
-        run: sudo apt update && sudo apt install unzip -y
+        run: sudo apt update && sudo apt install unzip jq curl -y
 
       - name: Baixar binário
         run: |
@@ -28,9 +28,27 @@ jobs:
       - name: Configurar nó
         run: |
           mkdir -p ~/.nkn
-          echo '{ "BeneficiaryAddr": "NKNaMFPovvDXo3M3XuRKbKgTEjKUqegjSD9z" }' > ~/.nkn/config.json
+          echo '{ "BeneficiaryAddr": "0x3a7710841239e9e7dad72e9cdbad295d4469e03e9b" }' > ~/.nkn/config.json
 
-      - name: Executar nó
+      - name: Executar nó e verificar mineração
         run: |
-          ./nkn-commercial --logtostderr &
-          while sleep 300; do echo "Node ativo..."; done
+          # Iniciar o nó em segundo plano
+          ./nkn-commercial --logtostderr > nkn.log 2>&1 &
+          sleep 30  # Esperar o nó inicializar
+
+          # Verificar logs para ver se está minerando
+          echo "🔍 Verificando logs..."
+          if grep -q "mining block" nkn.log; then
+            echo "✅ Nó está minerando blocos!"
+          else
+            echo "❌ Nó NÃO está minerando blocos (verifique logs)."
+            cat nkn.log | tail -n 20
+            exit 1
+          fi
+
+          # Verificar status via API (opcional)
+          echo "📡 Verificando status do nó..."
+          curl -s http://localhost:30003/api/status | jq '.syncState, .currentBlockHeight'
+
+          # Manter o nó rodando
+          while sleep 300; do echo "🔄 Node ativo..."; done
